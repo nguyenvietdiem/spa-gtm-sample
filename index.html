@@ -133,10 +133,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // Them ?debug=0 vao URL de an panel debug (de heatmap khong ghi panel nay)
   var SHOW_DEBUG = new URLSearchParams(location.search).get('debug') !== '0';
 
-  // Che do router: 'path' (pushState, can server) hoac 'hash' (#/products).
-  // Tu dong dung hash khi mo bang file://, hoac them ?router=hash vao URL.
-  var HASH_MODE = location.protocol === 'file:' ||
-                  new URLSearchParams(location.search).get('router') === 'hash';
+  // Che do router: 'path' (pushState, can server rewrite) hoac 'hash' (#/products).
+  // Tu dong dung hash khi mo bang file:// hoac host tren *.github.io (khong co rewrite
+  // va thuong nam trong thu muc con). Ep bang ?router=hash hoac ?router=path.
+  var routerParam = new URLSearchParams(location.search).get('router');
+  var HASH_MODE = routerParam === 'hash' ||
+                  (routerParam !== 'path' &&
+                   (location.protocol === 'file:' || /\.github\.io$/.test(location.hostname)));
 
   function currentPath() {
     if (HASH_MODE) {
